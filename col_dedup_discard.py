@@ -4,8 +4,8 @@ from os.path import isfile, join
 import os
 import re
 
-folder = "data_lake_0"
-outfolder = "data_lake_clean"
+folder = "data_lake_70"
+outfolder = "data_lake_70c"
 
 print("Step 1: listing files...")
 files = [f for f in listdir(folder) if isfile(join(folder, f))]
@@ -54,7 +54,7 @@ for file in files:
 				else:
 					splitwords.add(word)
 					k += 1
-	if k != 0:
+	if k >= 10:
 		with open(outfolder + '/' + file, 'w', encoding='utf-8') as f:
 			for word in splitwords:
 				f.write(str(word) + "\n")
