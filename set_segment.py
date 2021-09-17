@@ -73,7 +73,7 @@ def create_sets(set_location, size):
 	# word set: set of all values
 	return inverted_index, sets, word_set
 
-def segment(lake, size):
+def segment(lake, size, samples):
 	start = time.time()
 	rindex, sets, word_set = create_sets(lake, size)
 	end = time.time()
@@ -82,10 +82,13 @@ def segment(lake, size):
 	print("Total: " + str(len(sets)))
 	print("Tokens: " + str(len(word_set)))
 	set_10_1000 = dict()
+	set_1000_10000 = dict()
 	interval_10_1000 = 250
 	for col in sets:
 		if len(sets[col]) > 10 and len(sets[col]) < 1000:
 			set_10_1000[col] = sets[col]
+		elif len(sets[col]) > 1000 and len(sets[col]) < 10000:
+			set_1000_10000[col] = sets[col]
 	full = len(set_10_1000)
 	sample_dict = dict()
 	j = 1
@@ -97,10 +100,19 @@ def segment(lake, size):
 		print(str(j)+"/"+str(full))
 		filepath = "segmentfiles_70/" + str(i) + ".interval"
 		with open(filepath, "a+") as f:
-			if sample_dict[i] < 50:
+			if sample_dict[i] < samples:
 				f.write(col)
 				f.write("\n")
 				sample_dict[i] += 1
-		j+=1 
+		j+=1
+		
+	for col in set_1000_10000:
+		i = 4
+		filepath = "segmentfiles_70/" + str(i) + ".interval"
+		with open(filepath, "a+") as f:
+			if sample_dict[i] < samples:
+				f.write(col)
+				f.write("\n")
+				sample_dict[i] += 1
 
-segment("./data_lake_70/", 100000000)
+segment("./data_lake_70/", 100000000, 100)
