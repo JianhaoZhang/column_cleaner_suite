@@ -4,8 +4,8 @@ from os.path import isfile, join
 import os
 import re
 
-folder = "data_lake_0"
-outfolder = "data_lake_clean"
+folder = "data_lake_deduplicated"
+outfolder = "/localdisk2/wdc/data_lake_clean"
 
 print("Step 1: listing files...")
 files = [f for f in listdir(folder) if isfile(join(folder, f))]
@@ -24,7 +24,7 @@ if os.path.exists(outfolder + '/progress.txt'):
 	with open(outfolder + '/progress.txt', 'r', encoding='utf-8') as f:
 		sets = set(f.read().split(','))
 
-print("Step 3: deduplicating")
+print("Step 3: pruning")
 i = 1
 
 for file in files:
@@ -54,7 +54,13 @@ for file in files:
 				else:
 					splitwords.add(word)
 					k += 1
-	if k != 0:
+
+	isPureNum = True
+	for w in words:
+		if not w.isnumeric():
+			isPureNum = False
+			break
+	if k != 0 and (not isPureNum):
 		with open(outfolder + '/' + file, 'w', encoding='utf-8') as f:
 			for word in splitwords:
 				f.write(str(word) + "\n")
